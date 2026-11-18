@@ -223,9 +223,21 @@ const SUPABASE_URL =
 const SUPABASE_PUBLISHABLE_KEY =
 "sb_publishable_OJrh-S3KYeekZ28K-BE1xw_e1MXcbwq";
 
+// =====================================
+// TAB-BASED SESSION STORAGE
+// =====================================
+
 const supabaseClient = window.supabase.createClient(
   SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY
+  SUPABASE_PUBLISHABLE_KEY,
+  {
+    auth:{
+      storage:window.sessionStorage,
+      persistSession:true,
+      autoRefreshToken:true,
+      detectSessionInUrl:false
+    }
+  }
 );
 
 // =====================================
@@ -237,10 +249,51 @@ const message = document.getElementById("message");
 const button = document.getElementById("loginButton");
 
 // =====================================
+// CHECK EXISTING SESSION
+// =====================================
+
+async function checkExistingSession(){
+
+  try{
+
+    const {data,error} =
+      await supabaseClient.auth.getSession();
+
+    if(error) throw error;
+
+    if(!data.session) return;
+
+    const {data:profile,error:profileError} =
+      await supabaseClient
+        .from("profiles")
+        .select("role")
+        .eq("id",data.session.user.id)
+        .single();
+
+    if(profileError || !profile){
+      await supabaseClient.auth.signOut();
+      return;
+    }
+
+    if(profile.role === "admin"){
+      location.replace("admin.html");
+    }else if(
+      profile.role === "king" ||
+      profile.role === "queen"
+    ){
+      location.replace("chat.html");
+    }
+
+  }catch(error){
+    console.error("Session check:",error.message);
+  }
+}
+
+// =====================================
 // LOGIN SYSTEM
 // =====================================
 
-form.addEventListener("submit", async (event) => {
+form.addEventListener("submit",async(event)=>{
 
   event.preventDefault();
 
@@ -253,14 +306,12 @@ form.addEventListener("submit", async (event) => {
     .getElementById("password")
     .value;
 
-  if (!/^[a-zA-Z0-9_]{3,24}$/.test(username)) {
-
+  if(!/^[a-zA-Z0-9_]{3,24}$/.test(username)){
     message.textContent = "Please enter a valid username.";
     return;
   }
 
-  if (!password) {
-
+  if(!password){
     message.textContent = "Please enter your password.";
     return;
   }
@@ -269,50 +320,39 @@ form.addEventListener("submit", async (event) => {
   button.textContent = "Please wait...";
   message.textContent = "Checking your account...";
 
-  try {
+  try{
 
-    // =====================================
     // USERNAME TO EMAIL
-    // =====================================
 
     let loginEmail;
 
-    if (username === "admin") {
-
+    if(username === "admin"){
       loginEmail = "khushdonga7@gmail.com";
-
-    } else {
-
+    }else{
       loginEmail =
         username + "@login.hidden-conversations.com";
     }
 
-    // =====================================
-    // SUPABASE LOGIN
-    // =====================================
+    // SUPABASE AUTHENTICATION
 
     const {data,error} =
       await supabaseClient.auth.signInWithPassword({
-
         email:loginEmail,
         password:password
-
       });
 
-    if (error) throw error;
+    if(error) throw error;
 
-    // =====================================
     // FETCH PROFILE
-    // =====================================
 
     const {data:profile,error:profileError} =
       await supabaseClient
         .from("profiles")
-        .select("id,username,display_name,role,avatar_url")
+        .select("id,username,display_name,role")
         .eq("id",data.user.id)
         .single();
 
-    if (profileError || !profile) {
+    if(profileError || !profile){
 
       await supabaseClient.auth.signOut();
 
@@ -321,14 +361,12 @@ form.addEventListener("submit", async (event) => {
       );
     }
 
-    // =====================================
     // VERIFY USERNAME
-    // =====================================
 
-    if (
+    if(
       !profile.username ||
       profile.username.toLowerCase() !== username
-    ) {
+    ){
 
       await supabaseClient.auth.signOut();
 
@@ -337,20 +375,16 @@ form.addEventListener("submit", async (event) => {
       );
     }
 
-    // =====================================
     // VERIFY ROLE
-    // =====================================
 
-    if (!["admin","king","queen"].includes(profile.role)) {
+    if(!["admin","king","queen"].includes(profile.role)){
 
       await supabaseClient.auth.signOut();
 
       throw new Error("Invalid account role.");
     }
 
-    // =====================================
-    // ROLE BASED REDIRECT
-    // =====================================
+    // SUCCESS
 
     message.textContent =
       "Welcome, " +
@@ -359,28 +393,30 @@ form.addEventListener("submit", async (event) => {
 
     button.textContent = "Opening Private Space...";
 
-    button.disabled = true;
-
     const destination =
       profile.role === "admin"
         ? "admin.html"
         : "chat.html";
 
-    // Redirect after successful authentication
-    window.location.replace(destination);
+    location.replace(destination);
 
-  } catch (error) {
+  }catch(error){
 
     message.textContent =
       error.message || "Login failed. Please try again.";
 
     button.textContent = "Enter Private Space";
-
     button.disabled = false;
 
   }
 
 });
+
+// =====================================
+// START
+// =====================================
+
+checkExistingSession();
 
 </script>
 
