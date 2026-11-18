@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard | The Hidden Conversations</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Georgia,serif}
+body{background:#07172B;color:#f5f0e6;min-height:100vh}
+header{padding:22px;background:#0b2038;border-bottom:1px solid #B89450;display:flex;justify-content:space-between;align-items:center;gap:15px}
+header h1{color:#d5b675;font-size:21px;font-weight:normal}
+.container{max-width:1000px;margin:auto;padding:25px 18px}
+.welcome{margin-bottom:25px}
+.welcome h2{color:#d5b675;font-weight:normal;margin-bottom:8px}
+.welcome p{color:#aab5c4;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
+.card{background:#10253d;border:1px solid #34475c;border-radius:12px;padding:22px}
+.card h3{color:#d5b675;font-weight:normal;margin-bottom:18px}
+label{display:block;color:#b9c5d2;font-size:13px;margin:12px 0 7px}
+input,select,textarea{width:100%;padding:12px;background:#07172B;border:1px solid #40546b;border-radius:7px;color:white;outline:none}
+button{padding:12px 15px;border:0;border-radius:7px;background:#B89450;color:#07172B;font-weight:bold;cursor:pointer}
+button:hover{background:#d5b675}
+.primary{width:100%;margin-top:15px}
+.secondary{background:#263d55;color:white}
+.danger{background:#8f3333;color:white}
+button:disabled{opacity:.5;cursor:wait}
+.top-button{padding:9px 13px}
+#status{margin:20px 0;padding:12px;border-radius:7px;background:#10253d;color:#d5b675;overflow-wrap:anywhere}
+.user-item,.notice-item{padding:13px 0;border-bottom:1px solid #34475c;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.user-item small,.notice-item small{color:#aab5c4}
+.actions{display:flex;gap:7px;flex-wrap:wrap}
+.hidden{display:none!important}
+footer{text-align:center;color:#718096;font-size:12px;padding:30px}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>✦ The Hidden Conversations</h1>
+  <button class="secondary top-button" id="logoutButton">Logout</button>
+</header>
+
+<main class="container">
+
+  <section class="welcome">
+    <h2>Admin Dashboard</h2>
+    <p>Manage your private space and user accounts.</p>
+  </section>
+
+  <div id="status">Checking admin access...</div>
+
+  <section id="dashboard" class="hidden">
+
+    <div class="grid">
+
+      <div class="card">
+        <h3>Create User Account</h3>
+
+        <form id="createForm">
+          <label>Account Role</label>
+          <select id="newRole" required>
+            <option value="king">King</option>
+            <option value="queen">Queen</option>
+          </select>
+
+          <label>Username</label>
+          <input id="newUsername" required minlength="3" maxlength="24">
+
+          <label>Display Name</label>
+          <input id="newDisplayName" required maxlength="40">
+
+          <label>Password (12-128 characters)</label>
+          <input id="newPassword" type="password" required minlength="12" maxlength="128">
+
+          <button class="primary" type="submit">Create Account</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h3>Manage User Accounts</h3>
+        <button class="primary" id="refreshUsers">Refresh Accounts</button>
+        <div id="usersList"></div>
+      </div>
+
+      <div class="card">
+        <h3>Change User Password</h3>
+
+        <form id="passwordForm">
+          <label>Select Account</label>
+          <select id="passwordUser" required></select>
+
+          <label>New Password (12-128 characters)</label>
+          <input id="changedPassword" type="password" required minlength="12" maxlength="128">
+
+          <button class="primary" type="submit">Update Password</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h3>Post Notice</h3>
+
+        <form id="noticeForm">
+          <label>Notice Title</label>
+          <input id="noticeTitle" maxlength="100" required>
+
+          <label>Notice Message</label>
+          <textarea id="noticeMessage" rows="4" maxlength="2000" required></textarea>
+
+          <button class="primary" type="submit">Publish Notice</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h3>Chat History Settings</h3>
+        <p style="color:#aab5c4;font-size:14px;margin-bottom:15px">
+          Turn message history ON or OFF.
+        </p>
+
+        <select id="historySetting">
+          <option value="true">History ON</option>
+          <option value="false">History OFF</option>
+        </select>
+
+        <button class="primary" id="saveHistory">Save Setting</button>
+      </div>
+
+      <div class="card">
+        <h3>Published Notices</h3>
+        <button class="primary" id="refreshNotices">Refresh Notices</button>
+        <div id="noticesList"></div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer>PRIVATE • PERSONAL • SECURE</footer>
+
+<script>
+const SUPABASE_URL = "YOUR_PROJECT_URL";
+const SUPABASE_PUBLISHABLE_KEY = "YOUR_PUBLISHABLE_KEY";
+
+const client = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+const statusBox = document.getElementById("status");
+const dashboard = document.getElementById("dashboard");
+
+let currentUsers = [];
+
+function showStatus(message, isError = false) {
+  statusBox.textContent = message;
+  statusBox.style.color = isError ? "#ff9999" : "#d5b675";
+}
+
+async function adminRequest(actionData) {
+  const { data: sessionData } = await client.auth.getSession();
+
+  const token = sessionData.session?.access_token;
+
+  if (!token) throw new Error("Please login again.");
+
+  const { data, error } = await client.functions.invoke(
+    "manage-users",
+    {
+      body: actionData,
+      headers: {
+        Authorization: "Bearer " + token
+      }
+    }
+  );
+
+  if (error) throw error;
+  if (data?.error) throw new Error(data.error);
+
+  return data;
+}
+
+async function checkAdmin() {
+  const { data } = await client.auth.getSession();
+
+  if (!data.session) {
+    location.replace("index.html");
+    return;
+  }
+
+  const { data: profile, error } = await client
+    .from("profiles")
+    .select("role,display_name")
+    .eq("id", data.session.user.id)
+    .single();
+
+  if (error || profile?.role !== "admin") {
+    await client.auth.signOut();
+    location.replace("index.html");
+    return;
+  }
+
+  showStatus("Welcome, " + profile.display_name + ". Admin access verified.");
+  dashboard.classList.remove("hidden");
+
+  await loadUsers();
+  await loadHistory();
+  await loadNotices();
+}
+
+async function loadUsers() {
+  try {
+    const { data, error } = await client
+      .from("profiles")
+      .select("id,username,display_name,role")
+      .in("role", ["king","queen"])
+      .order("role");
+
+    if (error) throw error;
+
+    currentUsers = data || [];
+
+    const list = document.getElementById("usersList");
+    const select = document.getElementById("passwordUser");
+
+    list.innerHTML = "";
+    select.innerHTML = "";
+
+    if (!currentUsers.length) {
+      list.textContent = "No King or Queen accounts created yet.";
+      select.innerHTML = '<option value="">No accounts</option>';
+      return;
+    }
+
+    currentUsers.forEach(user => {
+      const option = document.createElement("option");
+      option.value = user.id;
+      option.textContent = user.role.toUpperCase() + " - " + user.username;
+      select.appendChild(option);
+
+      const item = document.createElement("div");
+      item.className = "user-item";
+
+      const info = document.createElement("div");
+      const name = document.createElement("strong");
+      name.textContent = user.display_name;
+      const details = document.createElement("small");
+      details.textContent = user.role.toUpperCase() + " • @" + user.username;
+      info.append(name, document.createElement("br"), details);
+
+      const actions = document.createElement("div");
+      actions.className = "actions";
+
+      const deleteButton = document.createElement("button");
+      deleteButton.className = "danger";
+      deleteButton.textContent = "Delete";
+      deleteButton.addEventListener("click", () => deleteUser(user));
+
+      actions.appendChild(deleteButton);
+      item.append(info, actions);
+      list.appendChild(item);
+    });
+
+  } catch (error) {
+    showStatus(error.message, true);
+  }
+}
+
+async function deleteUser(user) {
+  if (!confirm("Delete " + user.role + " account @" + user.username + "?")) return;
+
+  try {
+    await adminRequest({
+      action: "delete_user",
+      user_id: user.id
+    });
+
+    showStatus("Account deleted successfully.");
+    await loadUsers();
+
+  } catch (error) {
+    showStatus(error.message, true);
+  }
+}
+
+document.getElementById("createForm").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  try {
+    const result = await adminRequest({
+      action: "create_user",
+      role: document.getElementById("newRole").value,
+      username: document.getElementById("newUsername").value.trim(),
+      display_name: document.getElementById("newDisplayName").value.trim(),
+      password: document.getElementById("newPassword").value
+    });
+
+    showStatus("Account created: " + result.account.username);
+    e.target.reset();
+    await loadUsers();
+
+  } catch (error) {
+    showStatus(error.message, true);
+  }
+});
+
+document.getElementById("passwordForm").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  try {
+    await adminRequest({
+      action: "change_password",
+      user_id: document.getElementById("passwordUser").value,
+      new_password: document.getElementById("changedPassword").value
+    });
+
+    showStatus("Password updated successfully.");
+    e.target.reset();
+
+  } catch (error) {
+    showStatus(error.message, true);
+  }
+});
+
+async function loadHistory() {
+  try {
+    const { data, error } = await client
+      .from("app_settings")
+      .select("history_enabled")
+      .limit(1)
+      .single();
+
+    if (error) throw error;
+
+    document.getElementById("historySetting").value =
+      String(data.history_enabled);
+
+  } catch (error) {
+    showStatus("History setting: " + error.message, true);
+  }
+}
+
+document.getElementById("saveHistory").addEventListener("click", async () => {
+  try {
+    const enabled =
+      document.getElementById("historySetting").value === "true";
+
+    const { error } = await client
+      .from("app_settings")
+      .update({
+        history_enabled: enabled,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", true);
+
+    if (error) throw error;
+
+    showStatus("Chat history setting saved.");
+
+  } catch (error) {
+    showStatus(error.message, true);
+  }
+});
+
+document.getElementById("noticeForm").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  try {
+    const { error } = await client
+      .from("notices")
+      .insert({
+        title: document.getElementById("noticeTitle").value.trim(),
+        message: document.getElementById("noticeMessage").value.trim(),
+        is_active: true
+      });
+
+    if (error) throw error;
+
+    showStatus("Notice published successfully.");
+    e.target.reset();
+    await loadNotices();
+
+  } catch (error) {
+    showStatus(error.message, true);
+  }
+});
+
+async function loadNotices() {
+  try {
+    const { data, error } = await client
+      .from("notices")
+      .select("id,title,message,created_at")
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    const list = document.getElementById("noticesList");
+    list.innerHTML = "";
+
+    (data || []).forEach(notice => {
+      const item = document.createElement("div");
+      item.className = "notice-item";
+
+      const info = document.createElement("div");
+      const title = document.createElement("strong");
+      title.textContent = notice.title;
+      const detail = document.createElement("small");
+      detail.textContent = notice.message;
+      info.append(title, document.createElement("br"), detail);
+
+      const remove = document.createElement("button");
+      remove.className = "danger";
+      remove.textContent = "Delete";
+      remove.addEventListener("click", async () => {
+        if (!confirm("Delete this notice?")) return;
+
+        const { error } = await client
+          .from("notices")
+          .delete()
+          .eq("id", notice.id);
+
+        if (error) {
+          showStatus(error.message, true);
+        } else {
+          showStatus("Notice deleted.");
+          await loadNotices();
+        }
+      });
+
+      item.append(info, remove);
+      list.appendChild(item);
+    });
+
+    if (!data?.length) {
+      list.textContent = "No notices published.";
+    }
+
+  } catch (error) {
+    showStatus(error.message, true);
+  }
+}
+
+document.getElementById("refreshUsers")
+  .addEventListener("click", loadUsers);
+
+document.getElementById("refreshNotices")
+  .addEventListener("click", loadNotices);
+
+document.getElementById("logoutButton")
+  .addEventListener("click", async () => {
+    await client.auth.signOut();
+    location.replace("index.html");
+  });
+
+checkAdmin();
+</script>
+
+</body>
+</html>
