@@ -1,0 +1,228 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Hidden Conversations</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Georgia, serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top, #183453 0%, #07172B 55%, #030b16 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #f5f0e6;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 410px;
+      padding: 42px 30px;
+      background: rgba(7, 23, 43, 0.88);
+      border: 1px solid #B89450;
+      border-radius: 18px;
+      text-align: center;
+      box-shadow: 0 15px 55px rgba(0,0,0,0.5);
+    }
+
+    .symbol {
+      font-size: 42px;
+      color: #B89450;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: 27px;
+      font-weight: normal;
+      color: #d5b675;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #aab5c4;
+      font-size: 13px;
+      letter-spacing: 2px;
+      margin-bottom: 35px;
+    }
+
+    input {
+      width: 100%;
+      padding: 15px;
+      margin-bottom: 17px;
+      background: #10253d;
+      border: 1px solid #34475c;
+      border-radius: 8px;
+      color: white;
+      outline: none;
+      font-size: 15px;
+    }
+
+    input:focus {
+      border-color: #B89450;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      background: #B89450;
+      color: #07172B;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    #message {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #d5b675;
+      min-height: 20px;
+      overflow-wrap: anywhere;
+    }
+
+    .footer {
+      margin-top: 35px;
+      color: #718096;
+      font-size: 11px;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="login-card">
+
+    <div class="symbol">✦</div>
+
+    <h1>The Hidden Conversations</h1>
+
+    <p class="subtitle">A PRIVATE WORLD FOR TWO</p>
+
+    <form id="loginForm">
+
+      <input
+        type="text"
+        id="username"
+        placeholder="Username"
+        autocomplete="username"
+        required
+      >
+
+      <input
+        type="password"
+        id="password"
+        placeholder="Password"
+        autocomplete="current-password"
+        required
+      >
+
+      <button type="submit" id="loginButton">
+        Enter Private Space
+      </button>
+
+    </form>
+
+    <p id="message"></p>
+
+    <div class="footer">
+      PRIVATE • PERSONAL • SECURE
+    </div>
+
+  </div>
+
+  <script>
+    // Replace these with your own Supabase project details
+    const SUPABASE_URL = "YOUR_PROJECT_URL";
+    const SUPABASE_PUBLISHABLE_KEY = "YOUR_PUBLISHABLE_KEY";
+
+    const supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+    const form = document.getElementById("loginForm");
+    const message = document.getElementById("message");
+    const button = document.getElementById("loginButton");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const username = document
+        .getElementById("username")
+        .value.trim()
+        .toLowerCase();
+
+      const password = document
+        .getElementById("password")
+        .value;
+
+      if (!/^[a-zA-Z0-9_]{3,24}$/.test(username)) {
+        message.textContent = "Please enter a valid username.";
+        return;
+      }
+
+      button.disabled = true;
+      message.textContent = "Checking your account...";
+
+      try {
+        const email =
+          username + "@login.hidden-conversations.com";
+
+        const { data, error } =
+          await supabaseClient.auth.signInWithPassword({
+            email,
+            password
+          });
+
+        if (error) throw error;
+
+        const { data: profile, error: profileError } =
+          await supabaseClient
+            .from("profiles")
+            .select("username, display_name, role")
+            .eq("id", data.user.id)
+            .single();
+
+        if (profileError || !profile) {
+          await supabaseClient.auth.signOut();
+          throw new Error("Account profile not found.");
+        }
+
+        message.textContent =
+          "Welcome, " + profile.display_name + "! Role: " + profile.role;
+
+        // Temporary login test.
+        // We will build the Admin, King and Queen dashboards next.
+
+      } catch (error) {
+        message.textContent =
+          error.message || "Login failed. Please try again.";
+      } finally {
+        button.disabled = false;
+      }
+    });
+  </script>
+
+</body>
+</html>
