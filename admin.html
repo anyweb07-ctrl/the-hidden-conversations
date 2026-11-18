@@ -146,7 +146,15 @@ const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_OJrh-S3KYeekZ28K-BE1xw_e1MXcbwq
 
 const client = window.supabase.createClient(
   SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY
+  SUPABASE_PUBLISHABLE_KEY,
+  {
+    auth: {
+      storage: window.sessionStorage,
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: false
+    }
+  }
 );
 
 const statusBox = document.getElementById("status");
