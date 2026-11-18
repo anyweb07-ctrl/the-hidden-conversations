@@ -1,0 +1,95 @@
+/* The Hidden Conversations — Dark Maroon Fabric Theme */
+:root{
+  --page:#26070f;
+  --panel:rgba(38,7,15,.86);
+  --header:rgba(49,8,20,.92);
+  --sent:#873653;
+  --received:rgba(243,231,236,.94);
+  --accent:#e4bdca;
+  --text:#f8edf1;
+  --border:rgba(227,183,198,.35);
+  --blush:#F3E7EC;
+  --maroon:#390D20;
+  --wine:#4E0917;
+  --burgundy:#873653;
+}
+*{scrollbar-color:#873653 #26070f}
+body{
+  background-color:#26070f !important;
+  background-image:linear-gradient(135deg,rgba(25,2,9,.28),rgba(55,4,18,.18)),url('maroon-texture.jpg') !important;
+  background-position:center !important;
+  background-size:cover !important;
+  background-attachment:fixed !important;
+  color:var(--text) !important;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif !important;
+  animation:pageReveal .75s ease both;
+}
+@keyframes pageReveal{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+@keyframes softPulse{0%,100%{box-shadow:0 0 0 rgba(190,91,125,0)}50%{box-shadow:0 0 24px rgba(190,91,125,.16)}}
+@keyframes messageIn{from{opacity:0;transform:translateY(9px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+header,.app>header{
+  background:rgba(43,7,18,.88) !important;
+  border-color:var(--border) !important;
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+}
+header h1,header h2,header h3,.welcome h2,.card h3{color:#F3DDE5 !important}
+.app{
+  background:rgba(35,5,14,.78) !important;
+  border-color:var(--border) !important;
+  box-shadow:0 18px 70px rgba(0,0,0,.38);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+#status,#settingsPanel,#status:not(.user-status){
+  background:rgba(55,9,25,.88) !important;
+  color:#F0C9D6 !important;
+  border-color:var(--border) !important;
+}
+.card,.grid>div,.welcome,.container>section,.notice-item,.user-item{
+  background:rgba(53,10,27,.82) !important;
+  border-color:var(--border) !important;
+  border-radius:16px !important;
+  box-shadow:0 12px 34px rgba(0,0,0,.22);
+  backdrop-filter:blur(14px);
+}
+input,select,textarea,#messageInput{
+  background:var(--blush) !important;
+  color:var(--maroon) !important;
+  border:1px solid #D9B9C6 !important;
+  border-radius:11px !important;
+  transition:border-color .25s ease,box-shadow .25s ease,transform .25s ease;
+}
+input::placeholder,textarea::placeholder,#messageInput::placeholder{color:#896879 !important}
+input:focus,select:focus,textarea:focus,#messageInput:focus{
+  outline:none !important;
+  border-color:#C77D98 !important;
+  box-shadow:0 0 0 3px rgba(199,125,152,.2) !important;
+}
+button,.header-actions button,#removeBackground{
+  background:linear-gradient(135deg,#873653,#642039) !important;
+  color:#fff5f8 !important;
+  border:1px solid rgba(238,190,207,.35) !important;
+  border-radius:11px !important;
+  transition:transform .22s ease,box-shadow .22s ease,filter .22s ease !important;
+}
+button:hover,.header-actions button:hover,#removeBackground:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 22px rgba(135,54,83,.32);
+  filter:brightness(1.12);
+}
+button:active{transform:scale(.97)}
+.secondary{background:rgba(243,231,236,.13) !important;color:#F3E7EC !important}
+.danger{background:linear-gradient(135deg,#9b3047,#6e172c) !important}
+label,.setting-row,.welcome p,.card p,.user-item small,.notice-item small{color:#E5CBD4 !important}
+#messages{
+  background-color:rgba(38,7,15,.22) !important;
+  background-blend-mode:normal;
+}
+.message{animation:messageIn .32s ease both;border:1px solid rgba(226,183,198,.18)}
+.message.sent,.sent{background:rgba(135,54,83,.9) !important;color:#fff5f8 !important}
+.message.received,.received{background:rgba(243,231,236,.94) !important;color:#390D20 !important}
+.empty{background:rgba(38,7,15,.72) !important;color:#F3DDE5 !important}
+#settingsPanel{animation:pageReveal .28s ease both}
+footer{color:#D5B5C1 !important}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
