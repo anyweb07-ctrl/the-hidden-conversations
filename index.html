@@ -1,362 +1,388 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>The Hidden Conversations</title>
+<title>The Hidden Conversations</title>
 
-  <meta name="theme-color" content="#07172B">
-  <meta name="description" content="A private world for two.">
+<meta name="theme-color" content="#07172B">
+<meta name="description" content="A private world for two.">
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Georgia, serif;
-    }
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Georgia,serif;
+}
 
-    body {
-      min-height: 100vh;
-      min-height: 100dvh;
-      background:
-        radial-gradient(circle at top, #183453 0%, #07172B 55%, #030b16 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      color: #f5f0e6;
-    }
+body{
+  min-height:100vh;
+  min-height:100dvh;
+  background:
+    radial-gradient(circle at top,#183453 0%,#07172B 55%,#030b16 100%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  color:#f5f0e6;
+}
 
-    .login-card {
-      width: 100%;
-      max-width: 410px;
-      padding: 42px 30px;
-      background: rgba(7, 23, 43, 0.92);
-      border: 1px solid #B89450;
-      border-radius: 18px;
-      text-align: center;
-      box-shadow: 0 15px 55px rgba(0,0,0,0.5);
-      backdrop-filter: blur(12px);
-    }
+.login-card{
+  width:100%;
+  max-width:410px;
+  padding:42px 30px;
+  background:rgba(7,23,43,.92);
+  border:1px solid #B89450;
+  border-radius:18px;
+  text-align:center;
+  box-shadow:0 15px 55px rgba(0,0,0,.5);
+  backdrop-filter:blur(12px);
+}
 
-    .symbol {
-      font-size: 46px;
-      color: #B89450;
-      margin-bottom: 18px;
-    }
+.symbol{
+  font-size:46px;
+  color:#B89450;
+  margin-bottom:18px;
+}
 
-    h1 {
-      font-size: 27px;
-      font-weight: normal;
-      color: #d5b675;
-      margin-bottom: 12px;
-      line-height: 1.3;
-    }
+h1{
+  font-size:27px;
+  font-weight:normal;
+  color:#d5b675;
+  margin-bottom:12px;
+  line-height:1.3;
+}
 
-    .subtitle {
-      color: #aab5c4;
-      font-size: 12px;
-      letter-spacing: 2px;
-      margin-bottom: 35px;
-    }
+.subtitle{
+  color:#aab5c4;
+  font-size:12px;
+  letter-spacing:2px;
+  margin-bottom:35px;
+}
 
-    .input-group {
-      text-align: left;
-      margin-bottom: 17px;
-    }
+.input-group{
+  text-align:left;
+  margin-bottom:17px;
+}
 
-    label {
-      display: block;
-      color: #c4b58f;
-      font-size: 13px;
-      margin-bottom: 8px;
-    }
+label{
+  display:block;
+  color:#c4b58f;
+  font-size:13px;
+  margin-bottom:8px;
+}
 
-    input {
-      width: 100%;
-      padding: 15px;
-      background: #10253d;
-      border: 1px solid #34475c;
-      border-radius: 8px;
-      color: white;
-      outline: none;
-      font-size: 15px;
-    }
+input{
+  width:100%;
+  padding:15px;
+  background:#10253d;
+  border:1px solid #34475c;
+  border-radius:8px;
+  color:white;
+  outline:none;
+  font-size:15px;
+}
 
-    input:focus {
-      border-color: #B89450;
-      box-shadow: 0 0 0 2px rgba(184,148,80,0.12);
-    }
+input:focus{
+  border-color:#B89450;
+  box-shadow:0 0 0 2px rgba(184,148,80,.12);
+}
 
-    input::placeholder {
-      color: #8290a3;
-    }
+input::placeholder{
+  color:#8290a3;
+}
 
-    button {
-      width: 100%;
-      padding: 15px;
-      background: #B89450;
-      color: #07172B;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 12px;
-      transition: 0.2s ease;
-    }
+button{
+  width:100%;
+  padding:15px;
+  background:#B89450;
+  color:#07172B;
+  border:none;
+  border-radius:8px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  margin-top:12px;
+  transition:.2s ease;
+}
 
-    button:hover {
-      background: #d5b675;
-      transform: translateY(-1px);
-    }
+button:hover{
+  background:#d5b675;
+  transform:translateY(-1px);
+}
 
-    button:disabled {
-      opacity: 0.6;
-      cursor: wait;
-      transform: none;
-    }
+button:disabled{
+  opacity:.6;
+  cursor:wait;
+  transform:none;
+}
 
-    #message {
-      margin-top: 20px;
-      font-size: 14px;
-      color: #d5b675;
-      min-height: 20px;
-      line-height: 1.5;
-      overflow-wrap: anywhere;
-    }
+#message{
+  margin-top:20px;
+  font-size:14px;
+  color:#d5b675;
+  min-height:20px;
+  line-height:1.5;
+  overflow-wrap:anywhere;
+}
 
-    .footer {
-      margin-top: 35px;
-      color: #718096;
-      font-size: 11px;
-      letter-spacing: 1.5px;
-    }
+.footer{
+  margin-top:35px;
+  color:#718096;
+  font-size:11px;
+  letter-spacing:1.5px;
+}
 
-    .security-note {
-      color: #718096;
-      font-size: 11px;
-      margin-top: 14px;
-    }
+.security-note{
+  color:#718096;
+  font-size:11px;
+  margin-top:14px;
+}
 
-    @media (max-width: 480px) {
-      .login-card {
-        padding: 35px 23px;
-      }
+@media(max-width:480px){
+  .login-card{
+    padding:35px 23px;
+  }
 
-      h1 {
-        font-size: 24px;
-      }
-    }
-  </style>
+  h1{
+    font-size:24px;
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <main class="login-card">
+<main class="login-card">
 
-    <div class="symbol">✦</div>
+  <div class="symbol">✦</div>
 
-    <h1>The Hidden Conversations</h1>
+  <h1>The Hidden Conversations</h1>
 
-    <p class="subtitle">A PRIVATE WORLD FOR TWO</p>
+  <p class="subtitle">A PRIVATE WORLD FOR TWO</p>
 
-    <form id="loginForm">
+  <form id="loginForm">
 
-      <div class="input-group">
-        <label for="username">Username</label>
-        <input
-          type="text"
-          id="username"
-          placeholder="Enter your username"
-          autocomplete="username"
-          maxlength="24"
-          required
-        >
-      </div>
+    <div class="input-group">
+      <label for="username">Username</label>
 
-      <div class="input-group">
-        <label for="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          placeholder="Enter your password"
-          autocomplete="current-password"
-          required
-        >
-      </div>
-
-      <button type="submit" id="loginButton">
-        Enter Private Space
-      </button>
-
-    </form>
-
-    <p id="message" role="status" aria-live="polite"></p>
-
-    <p class="security-note">
-      Your private space awaits.
-    </p>
-
-    <div class="footer">
-      PRIVATE • PERSONAL • SECURE
+      <input
+        type="text"
+        id="username"
+        placeholder="Enter your username"
+        autocomplete="username"
+        maxlength="24"
+        required
+      >
     </div>
 
-  </main>
+    <div class="input-group">
+      <label for="password">Password</label>
 
-  <script>
+      <input
+        type="password"
+        id="password"
+        placeholder="Enter your password"
+        autocomplete="current-password"
+        required
+      >
+    </div>
+
+    <button type="submit" id="loginButton">
+      Enter Private Space
+    </button>
+
+  </form>
+
+  <p id="message" role="status" aria-live="polite"></p>
+
+  <p class="security-note">
+    Your private space awaits.
+  </p>
+
+  <div class="footer">
+    PRIVATE • PERSONAL • SECURE
+  </div>
+
+</main>
+
+<script>
+
+// =====================================
+// SUPABASE CONFIGURATION
+// =====================================
+
+const SUPABASE_URL =
+"https://jjkrytylkxdxhvsybpdc.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+"sb_publishable_OJrh-S3KYeekZ28K-BE1xw_e1MXcbwq";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
+
+// =====================================
+// ELEMENTS
+// =====================================
+
+const form = document.getElementById("loginForm");
+const message = document.getElementById("message");
+const button = document.getElementById("loginButton");
+
+// =====================================
+// LOGIN SYSTEM
+// =====================================
+
+form.addEventListener("submit", async (event) => {
+
+  event.preventDefault();
+
+  const username = document
+    .getElementById("username")
+    .value.trim()
+    .toLowerCase();
+
+  const password = document
+    .getElementById("password")
+    .value;
+
+  if (!/^[a-zA-Z0-9_]{3,24}$/.test(username)) {
+
+    message.textContent = "Please enter a valid username.";
+    return;
+  }
+
+  if (!password) {
+
+    message.textContent = "Please enter your password.";
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Please wait...";
+  message.textContent = "Checking your account...";
+
+  try {
+
     // =====================================
-    // SUPABASE CONFIGURATION
+    // USERNAME TO EMAIL
     // =====================================
 
-    const SUPABASE_URL = "https://jjkrytylkxdxhvsybpdc.supabase.co";
+    let loginEmail;
 
-    const SUPABASE_PUBLISHABLE_KEY =
-      "sb_publishable_OJrh-S3KYeekZ28K-BE1xw_e1MXcbwq";
+    if (username === "admin") {
 
-    const supabaseClient = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_PUBLISHABLE_KEY
-    );
+      loginEmail = "khushdonga7@gmail.com";
 
-    // =====================================
-    // ELEMENTS
-    // =====================================
+    } else {
 
-    const form = document.getElementById("loginForm");
-    const message = document.getElementById("message");
-    const button = document.getElementById("loginButton");
+      loginEmail =
+        username + "@login.hidden-conversations.com";
+    }
 
     // =====================================
-    // LOGIN SYSTEM
+    // SUPABASE LOGIN
     // =====================================
 
-    form.addEventListener("submit", async (event) => {
+    const {data,error} =
+      await supabaseClient.auth.signInWithPassword({
 
-      event.preventDefault();
+        email:loginEmail,
+        password:password
 
-      const username = document
-        .getElementById("username")
-        .value.trim()
-        .toLowerCase();
+      });
 
-      const password = document
-        .getElementById("password")
-        .value;
+    if (error) throw error;
 
-      if (!/^[a-zA-Z0-9_]{3,24}$/.test(username)) {
-        message.textContent = "Please enter a valid username.";
-        return;
-      }
+    // =====================================
+    // FETCH PROFILE
+    // =====================================
 
-      if (!password) {
-        message.textContent = "Please enter your password.";
-        return;
-      }
+    const {data:profile,error:profileError} =
+      await supabaseClient
+        .from("profiles")
+        .select("id,username,display_name,role,avatar_url")
+        .eq("id",data.user.id)
+        .single();
 
-      button.disabled = true;
-      button.textContent = "Please wait...";
-      message.textContent = "Checking your account...";
+    if (profileError || !profile) {
 
-      try {
+      await supabaseClient.auth.signOut();
 
-        // ADMIN USES REAL EMAIL
-        // KING AND QUEEN USE INTERNAL EMAIL
+      throw new Error(
+        "Account profile not found. Please contact Admin."
+      );
+    }
 
-        let loginEmail;
+    // =====================================
+    // VERIFY USERNAME
+    // =====================================
 
-        if (username === "admin") {
-          loginEmail = "khushdonga7@gmail.com";
-        } else {
-          loginEmail =
-            username + "@login.hidden-conversations.com";
-        }
+    if (
+      !profile.username ||
+      profile.username.toLowerCase() !== username
+    ) {
 
-        // SUPABASE AUTHENTICATION
+      await supabaseClient.auth.signOut();
 
-        const { data, error } =
-          await supabaseClient.auth.signInWithPassword({
-            email: loginEmail,
-            password: password
-          });
+      throw new Error(
+        "Username does not match this account."
+      );
+    }
 
-        if (error) {
-          throw error;
-        }
+    // =====================================
+    // VERIFY ROLE
+    // =====================================
 
-        // FETCH USER PROFILE
+    if (!["admin","king","queen"].includes(profile.role)) {
 
-        const { data: profile, error: profileError } =
-          await supabaseClient
-            .from("profiles")
-            .select("id, username, display_name, role, avatar_url")
-            .eq("id", data.user.id)
-            .single();
+      await supabaseClient.auth.signOut();
 
-        if (profileError || !profile) {
+      throw new Error("Invalid account role.");
+    }
 
-          await supabaseClient.auth.signOut();
+    // =====================================
+    // ROLE BASED REDIRECT
+    // =====================================
 
-          throw new Error(
-            "Account profile not found. Please contact Admin."
-          );
-        }
+    message.textContent =
+      "Welcome, " +
+      (profile.display_name || profile.username) +
+      "! Redirecting...";
 
-        // VERIFY USERNAME MATCH
+    button.textContent = "Opening Private Space...";
 
-        if (profile.username !== username) {
+    button.disabled = true;
 
-          await supabaseClient.auth.signOut();
+    const destination =
+      profile.role === "admin"
+        ? "admin.html"
+        : "chat.html";
 
-          throw new Error("Username does not match this account.");
-        }
+    // Redirect after successful authentication
+    window.location.replace(destination);
 
-        // VERIFY ROLE
+  } catch (error) {
 
-        if (!["admin", "king", "queen"].includes(profile.role)) {
+    message.textContent =
+      error.message || "Login failed. Please try again.";
 
-          await supabaseClient.auth.signOut();
+    button.textContent = "Enter Private Space";
 
-          throw new Error("Invalid account role.");
-        }
+    button.disabled = false;
 
-        // SUCCESSFUL LOGIN
+  }
 
-        message.textContent =
-          "Welcome, " + profile.display_name +
-          "! Login successful.";
+});
 
-        button.textContent = "Login Successful";
-
-        // TEMPORARY LOGIN TEST
-        // Dashboards will be added in the next development step.
-
-        console.log("Logged in user:", {
-          username: profile.username,
-          displayName: profile.display_name,
-          role: profile.role
-        });
-
-      } catch (error) {
-
-        message.textContent =
-          error.message || "Login failed. Please try again.";
-
-        button.textContent = "Enter Private Space";
-
-      } finally {
-
-        button.disabled = false;
-
-      }
-
-    });
-
-  </script>
+</script>
 
 </body>
 </html>
