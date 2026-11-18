@@ -5,156 +5,131 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Private Chat | The Hidden Conversations</title>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --page:#07172B;--panel:#091c32;--header:#10253d;
+  --sent:#735c35;--received:#18334f;--accent:#B89450;
+  --text:#f5f0e6;--muted:#aab5c4;--border:#34475c;
+}
 body{
-  background:#07172B;
-  color:#f5f0e6;
-  font-family:Georgia,serif;
-  min-height:100vh;
-  min-height:100dvh;
-  display:flex;
-  justify-content:center;
+  background:var(--page);color:var(--text);
+  font-family:Georgia,serif;min-height:100vh;
+  min-height:100dvh;display:flex;justify-content:center;
 }
 .app{
-  width:100%;
-  max-width:850px;
-  height:100vh;
-  height:100dvh;
-  display:flex;
-  flex-direction:column;
-  background:#091c32;
-  border-left:1px solid #263d55;
-  border-right:1px solid #263d55;
+  width:100%;max-width:850px;height:100vh;height:100dvh;
+  display:flex;flex-direction:column;background:var(--panel);
+  border-left:1px solid var(--border);
+  border-right:1px solid var(--border);
 }
 header{
-  padding:17px;
-  background:#10253d;
-  border-bottom:1px solid #B89450;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
+  padding:15px;background:var(--header);
+  border-bottom:1px solid var(--accent);
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
 }
-header h1{
-  color:#d5b675;
-  font-size:19px;
-  font-weight:normal;
-}
-header p{
-  color:#aab5c4;
-  font-size:12px;
-  margin-top:5px;
-}
-#logout{
-  background:transparent;
-  border:1px solid #B89450;
-  color:#d5b675;
-  padding:9px 12px;
-  border-radius:7px;
-  cursor:pointer;
+header h1{color:var(--accent);font-size:19px;font-weight:normal}
+header p{color:var(--muted);font-size:12px;margin-top:5px}
+.header-actions{display:flex;gap:8px}
+.header-actions button{
+  background:transparent;border:1px solid var(--accent);
+  color:var(--accent);padding:9px 11px;border-radius:7px;cursor:pointer;
 }
 #status{
-  padding:9px 15px;
-  color:#d5b675;
-  font-size:12px;
-  text-align:center;
-  background:#0c2038;
+  padding:9px 15px;color:var(--accent);font-size:12px;
+  text-align:center;background:var(--header);
 }
 #messages{
-  flex:1;
-  overflow-y:auto;
-  padding:20px 15px;
-  display:flex;
-  flex-direction:column;
-  gap:13px;
+  flex:1;overflow-y:auto;padding:20px 15px;
+  display:flex;flex-direction:column;gap:13px;
 }
-.empty{
-  color:#8290a3;
-  text-align:center;
-  margin:auto;
-  font-size:14px;
-}
+.empty{color:#8290a3;text-align:center;margin:auto;font-size:14px}
 .message{
-  max-width:78%;
-  padding:12px 14px;
-  border-radius:13px;
-  overflow-wrap:anywhere;
-  line-height:1.5;
+  max-width:78%;padding:12px 14px;border-radius:13px;
+  overflow-wrap:anywhere;line-height:1.5;
 }
-.sent{
-  align-self:flex-end;
-  background:#735c35;
-  color:#fff8e9;
-  border-bottom-right-radius:3px;
-}
-.received{
-  align-self:flex-start;
-  background:#18334f;
-  color:#f5f0e6;
-  border-bottom-left-radius:3px;
-}
-.message small{
-  display:block;
-  text-align:right;
-  font-size:10px;
-  opacity:.7;
-  margin-top:6px;
+.sent{align-self:flex-end;background:var(--sent);color:#fff8e9;border-bottom-right-radius:3px}
+.received{align-self:flex-start;background:var(--received);color:var(--text);border-bottom-left-radius:3px}
+.message small{display:block;text-align:right;font-size:10px;opacity:.7;margin-top:6px}
+#typing{
+  min-height:20px;padding:0 17px 5px;color:var(--accent);
+  font-size:12px;font-style:italic;
 }
 form{
-  padding:13px;
-  display:flex;
-  gap:9px;
-  background:#10253d;
-  border-top:1px solid #34475c;
+  padding:13px;display:flex;gap:9px;
+  background:var(--header);border-top:1px solid var(--border);
 }
 textarea{
-  flex:1;
-  min-width:0;
-  resize:none;
-  height:48px;
-  max-height:120px;
-  padding:13px;
-  border-radius:9px;
-  border:1px solid #40546b;
-  background:#07172B;
-  color:white;
-  outline:none;
-  font-family:Arial,sans-serif;
-  font-size:14px;
+  flex:1;min-width:0;resize:none;height:48px;max-height:120px;
+  padding:13px;border-radius:9px;border:1px solid #40546b;
+  background:var(--page);color:white;outline:none;
+  font-family:Arial,sans-serif;font-size:14px;
 }
-textarea:focus{border-color:#B89450}
+textarea:focus{border-color:var(--accent)}
 #send{
-  width:75px;
-  border:0;
-  border-radius:9px;
-  background:#B89450;
-  color:#07172B;
-  font-weight:bold;
-  cursor:pointer;
+  width:75px;border:0;border-radius:9px;background:var(--accent);
+  color:#07172B;font-weight:bold;cursor:pointer;
 }
-#send:disabled{opacity:.5}
+#send:disabled{opacity:.5;cursor:not-allowed}
+#settingsPanel{
+  display:none;padding:15px;background:var(--header);
+  border-bottom:1px solid var(--accent);
+}
+#settingsPanel.open{display:block}
+.setting-row{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;margin:10px 0;font-size:13px;
+}
+.setting-row select{
+  width:55%;padding:9px;border-radius:7px;
+  border:1px solid var(--accent);background:var(--page);
+  color:var(--text);font-size:13px;
+}
+#saveStatus{font-size:11px;color:var(--accent);margin-top:8px}
 @media(max-width:500px){
-  header h1{font-size:16px}
+  header h1{font-size:15px}
   .message{max-width:88%}
+  .header-actions button{padding:8px;font-size:12px}
 }
 </style>
 </head>
 
 <body>
-
 <div class="app">
-
   <header>
     <div>
       <h1>✦ The Hidden Conversations</h1>
       <p id="userLabel">Private Conversation</p>
     </div>
-    <button id="logout">Logout</button>
+    <div class="header-actions">
+      <button id="settingsBtn" type="button">⚙ Settings</button>
+      <button id="logout" type="button">Logout</button>
+    </div>
   </header>
+
+  <section id="settingsPanel">
+    <div class="setting-row">
+      <label for="themeSelect">Chat Theme</label>
+      <select id="themeSelect">
+        <option value="midnight">Midnight Gold</option>
+        <option value="royal">Royal Blue</option>
+        <option value="emerald">Emerald</option>
+        <option value="rose">Rose Night</option>
+      </select>
+    </div>
+    <div class="setting-row">
+      <label for="backgroundSelect">Chat Background</label>
+      <select id="backgroundSelect">
+        <option value="default">Classic</option>
+        <option value="stars">Starry Night</option>
+        <option value="gradient">Soft Gradient</option>
+        <option value="dark">Deep Dark</option>
+      </select>
+    </div>
+    <div id="saveStatus">Your preferences are saved automatically.</div>
+  </section>
 
   <div id="status">Connecting...</div>
 
@@ -162,73 +137,131 @@ textarea:focus{border-color:#B89450}
     <div class="empty">Your private conversation starts here.</div>
   </main>
 
+  <div id="typing"></div>
+
   <form id="messageForm">
-    <textarea
-      id="messageInput"
-      placeholder="Write a message..."
-      maxlength="5000"
-      required
-    ></textarea>
+    <textarea id="messageInput" placeholder="Write a message..."
+      maxlength="5000" required></textarea>
     <button id="send" type="submit">Send</button>
   </form>
-
 </div>
 
 <script>
-// =====================================
-// SUPABASE CONFIGURATION
-// =====================================
-
 const SUPABASE_URL = "https://jjkrytylkxdxhvsybpdc.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_OJrh-S3KYeekZ28K-BE1xw_e1MXcbwq";
 
 const client = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY
+  SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY
 );
-
-// =====================================
-// ELEMENTS AND STATE
-// =====================================
 
 const messagesBox = document.getElementById("messages");
 const statusBox = document.getElementById("status");
+const typingBox = document.getElementById("typing");
 const messageInput = document.getElementById("messageInput");
 const sendButton = document.getElementById("send");
 
 let currentUser = null;
 let currentProfile = null;
 let conversationId = null;
-let realtimeChannel = null;
+let chatChannel = null;
 let loadedMessageIds = new Set();
+let typingTimer = null;
+let typingHideTimer = null;
+let isTyping = false;
+let partnerRole = null;
+let partnerName = "Partner";
 
-function setStatus(text) {
-  statusBox.textContent = text;
+function setStatus(value){
+  statusBox.textContent = value;
 }
 
-function formatTime(value) {
-  return new Date(value).toLocaleString([], {
-    dateStyle: "short",
-    timeStyle: "short"
+function formatTime(value){
+  return new Date(value).toLocaleString([],{
+    dateStyle:"short",timeStyle:"short"
   });
 }
 
-// =====================================
-// DISPLAY MESSAGE SAFELY
-// =====================================
+// THEMES
+const themes = {
+  midnight:{
+    page:"#07172B",panel:"#091c32",header:"#10253d",
+    sent:"#735c35",received:"#18334f",accent:"#B89450",
+    text:"#f5f0e6",border:"#34475c"
+  },
+  royal:{
+    page:"#07152e",panel:"#0b1e3d",header:"#142d54",
+    sent:"#315b9b",received:"#1b365e",accent:"#8eb9ff",
+    text:"#f0f5ff",border:"#34517a"
+  },
+  emerald:{
+    page:"#071e1a",panel:"#0c2923",header:"#123a30",
+    sent:"#356b50",received:"#194536",accent:"#8bc9a4",
+    text:"#edfff3",border:"#315b4b"
+  },
+  rose:{
+    page:"#251321",panel:"#301a2b",header:"#43243b",
+    sent:"#85506d",received:"#4a2d45",accent:"#e6a9c6",
+    text:"#fff0f7",border:"#68445d"
+  }
+};
 
-function renderMessage(message) {
-  if (loadedMessageIds.has(message.id)) return;
+const backgrounds = {
+  default:"none",
+  stars:"radial-gradient(circle at 15% 20%,#ffffff16 1px,transparent 2px),radial-gradient(circle at 75% 65%,#ffffff12 1px,transparent 2px)",
+  gradient:"linear-gradient(135deg,#14243b,#101c30,#1b2940)",
+  dark:"linear-gradient(135deg,#05090f,#10151e)"
+};
 
+function applyTheme(themeName,backgroundName){
+  const theme = themes[themeName] || themes.midnight;
+  const root = document.documentElement;
+  root.style.setProperty("--page",theme.page);
+  root.style.setProperty("--panel",theme.panel);
+  root.style.setProperty("--header",theme.header);
+  root.style.setProperty("--sent",theme.sent);
+  root.style.setProperty("--received",theme.received);
+  root.style.setProperty("--accent",theme.accent);
+  root.style.setProperty("--text",theme.text);
+  root.style.setProperty("--border",theme.border);
+
+  messagesBox.style.background =
+    backgrounds[backgroundName] || "none";
+}
+
+// SAVE CHAT PREFERENCES
+async function savePreferences(){
+  const theme = document.getElementById("themeSelect").value;
+  const background = document.getElementById("backgroundSelect").value;
+  const saveStatus = document.getElementById("saveStatus");
+
+  applyTheme(theme,background);
+  saveStatus.textContent = "Saving...";
+
+  const {error} = await client
+    .from("profiles")
+    .update({
+      chat_theme:theme,
+      chat_background:background
+    })
+    .eq("id",currentUser.id);
+
+  if(error){
+    saveStatus.textContent = "Save failed: " + error.message;
+  }else{
+    saveStatus.textContent = "✓ Preferences saved";
+  }
+}
+
+// DISPLAY MESSAGES
+function renderMessage(message){
+  if(loadedMessageIds.has(message.id)) return;
   loadedMessageIds.add(message.id);
 
   const empty = messagesBox.querySelector(".empty");
-  if (empty) empty.remove();
+  if(empty) empty.remove();
 
   const item = document.createElement("div");
-
-  item.className =
-    "message " +
+  item.className = "message " +
     (message.sender_id === currentUser.id ? "sent" : "received");
 
   const content = document.createElement("div");
@@ -237,29 +270,25 @@ function renderMessage(message) {
   const time = document.createElement("small");
   time.textContent = formatTime(message.created_at);
 
-  item.append(content, time);
+  item.append(content,time);
   messagesBox.appendChild(item);
-
   messagesBox.scrollTop = messagesBox.scrollHeight;
 }
 
-// =====================================
-// LOAD OLD MESSAGES
-// =====================================
-
-async function loadMessages() {
-  const { data, error } = await client
+// LOAD ALL MESSAGES - NO LIMIT
+async function loadMessages(){
+  const {data,error} = await client
     .from("messages")
     .select("id,conversation_id,sender_id,content,created_at")
-    .eq("conversation_id", conversationId)
-    .order("created_at", { ascending: true });
+    .eq("conversation_id",conversationId)
+    .order("created_at",{ascending:true});
 
-  if (error) throw error;
+  if(error) throw error;
 
   messagesBox.innerHTML = "";
   loadedMessageIds.clear();
 
-  if (!data || data.length === 0) {
+  if(!data || data.length === 0){
     messagesBox.innerHTML =
       '<div class="empty">No messages yet. Say hello!</div>';
     return;
@@ -268,164 +297,255 @@ async function loadMessages() {
   data.forEach(renderMessage);
 }
 
-// =====================================
-// REALTIME MESSAGES
-// =====================================
+// ONLINE STATUS
+function updateOnlineStatus(){
+  if(!chatChannel) return;
 
-function startRealtime() {
-  realtimeChannel = client
-    .channel("private-chat-" + conversationId)
-    .on(
-      "postgres_changes",
-      {
-        event: "INSERT",
-        schema: "public",
-        table: "messages",
-        filter: "conversation_id=eq." + conversationId
-      },
-      payload => {
-        renderMessage(payload.new);
+  const state = chatChannel.presenceState();
+  const onlineIds = Object.keys(state);
+  const partnerOnline = onlineIds.some(id => id !== currentUser.id);
+
+  setStatus(partnerName + (partnerOnline
+    ? " • Online"
+    : " • Offline"));
+}
+
+// TYPING INDICATOR
+function showTyping(payload){
+  if(!payload || payload.user_id === currentUser.id) return;
+
+  typingBox.textContent = payload.typing
+    ? partnerName + " is typing..."
+    : "";
+
+  clearTimeout(typingHideTimer);
+
+  if(payload.typing){
+    typingHideTimer = setTimeout(()=>{
+      typingBox.textContent = "";
+    },3000);
+  }
+}
+
+async function sendTyping(value){
+  if(!chatChannel) return;
+
+  await chatChannel.send({
+    type:"broadcast",
+    event:"typing",
+    payload:{
+      user_id:currentUser.id,
+      typing:value
+    }
+  });
+}
+
+// REALTIME PRESENCE + MESSAGES + TYPING
+function startRealtime(){
+  chatChannel = client
+    .channel("private-chat-" + conversationId,{
+      config:{
+        presence:{key:currentUser.id},
+        broadcast:{self:false}
       }
-    )
-    .subscribe(status => {
-      if (status === "SUBSCRIBED") {
-        setStatus("Connected • Private conversation");
-      } else if (status === "CHANNEL_ERROR") {
-        setStatus("Realtime unavailable. Messages can still be refreshed.");
+    })
+    .on("presence",{event:"sync"},()=>{
+      updateOnlineStatus();
+    })
+    .on("broadcast",{event:"typing"},({payload})=>{
+      showTyping(payload);
+    })
+    .on("postgres_changes",{
+      event:"INSERT",
+      schema:"public",
+      table:"messages",
+      filter:"conversation_id=eq." + conversationId
+    },payload=>{
+      renderMessage(payload.new);
+    })
+    .subscribe(async status=>{
+      if(status === "SUBSCRIBED"){
+        await chatChannel.track({
+          user_id:currentUser.id,
+          role:currentProfile.role
+        });
+        updateOnlineStatus();
+      }else if(status === "CHANNEL_ERROR"){
+        setStatus("Realtime connection error");
+      }else if(status === "CLOSED"){
+        setStatus("Realtime disconnected");
       }
     });
 }
 
-// =====================================
-// SEND MESSAGE
-// =====================================
-
+// SEND TEXT MESSAGE
 document.getElementById("messageForm")
-.addEventListener("submit", async event => {
+.addEventListener("submit",async event=>{
   event.preventDefault();
 
   const content = messageInput.value.trim();
-
-  if (!content || !conversationId || !currentUser) return;
+  if(!content || !conversationId || !currentUser) return;
 
   sendButton.disabled = true;
 
-  try {
-    const { data, error } = await client
+  try{
+    const {data,error} = await client
       .from("messages")
       .insert({
-        conversation_id: conversationId,
-        sender_id: currentUser.id,
-        content: content,
-        message_type: "text"
+        conversation_id:conversationId,
+        sender_id:currentUser.id,
+        content:content,
+        message_type:"text"
       })
       .select("id,conversation_id,sender_id,content,created_at")
       .single();
 
-    if (error) throw error;
+    if(error) throw error;
 
     renderMessage(data);
     messageInput.value = "";
-
-  } catch (error) {
+    if(isTyping){
+      isTyping = false;
+      await sendTyping(false);
+    }
+  }catch(error){
     setStatus("Message error: " + error.message);
-  } finally {
+  }finally{
     sendButton.disabled = false;
     messageInput.focus();
   }
 });
 
-// =====================================
-// INITIALIZE PRIVATE CHAT
-// =====================================
+// TYPING EVENTS
+messageInput.addEventListener("input",()=>{
+  if(!chatChannel) return;
 
-async function initializeChat() {
-  try {
-    const { data: sessionData, error: sessionError } =
+  if(!isTyping){
+    isTyping = true;
+    sendTyping(true);
+  }
+
+  clearTimeout(typingTimer);
+  typingTimer = setTimeout(()=>{
+    isTyping = false;
+    sendTyping(false);
+  },1200);
+});
+
+// SETTINGS
+document.getElementById("settingsBtn")
+.addEventListener("click",()=>{
+  document.getElementById("settingsPanel")
+    .classList.toggle("open");
+});
+
+document.getElementById("themeSelect")
+.addEventListener("change",savePreferences);
+
+document.getElementById("backgroundSelect")
+.addEventListener("change",savePreferences);
+
+// INITIALIZE
+async function initializeChat(){
+  try{
+    const {data:sessionData,error:sessionError} =
       await client.auth.getSession();
 
-    if (sessionError) throw sessionError;
+    if(sessionError) throw sessionError;
 
-    if (!sessionData.session) {
+    if(!sessionData.session){
       location.replace("index.html");
       return;
     }
 
     currentUser = sessionData.session.user;
 
-    const { data: profile, error: profileError } =
-      await client
-        .from("profiles")
-        .select("id,username,display_name,role")
-        .eq("id", currentUser.id)
-        .single();
+    const {data:profile,error:profileError} = await client
+      .from("profiles")
+      .select("id,username,display_name,role,chat_theme,chat_background")
+      .eq("id",currentUser.id)
+      .single();
 
-    if (profileError || !profile) {
+    if(profileError || !profile){
       throw new Error("User profile not found.");
     }
 
     currentProfile = profile;
 
-    // ADMIN MUST NOT ENTER CHAT
-    if (profile.role === "admin") {
+    if(profile.role === "admin"){
       location.replace("admin.html");
       return;
     }
 
-    if (profile.role !== "king" && profile.role !== "queen") {
+    if(profile.role !== "king" && profile.role !== "queen"){
       throw new Error("Chat access denied.");
     }
 
     document.getElementById("userLabel").textContent =
-      profile.display_name + " • " + profile.role.toUpperCase();
+      (profile.display_name || profile.username) +
+      " • " + profile.role.toUpperCase();
 
-    // FIND THE USER'S PRIVATE CONVERSATION
-    const column =
-      profile.role === "king" ? "king_id" : "queen_id";
+    // Find partner profile
+    partnerRole = profile.role === "king" ? "queen" : "king";
 
-    const { data: conversation, error: conversationError } =
-      await client
-        .from("conversations")
-        .select("id,king_id,queen_id")
-        .eq(column, currentUser.id)
-        .single();
+    const {data:partner} = await client
+      .from("profiles")
+      .select("display_name,username")
+      .eq("role",partnerRole)
+      .maybeSingle();
 
-    if (conversationError || !conversation) {
+    if(partner){
+      partnerName = partner.display_name || partner.username || "Partner";
+    }
+
+    // Restore saved preferences
+    const savedTheme = profile.chat_theme || "midnight";
+    const savedBackground = profile.chat_background || "default";
+
+    document.getElementById("themeSelect").value =
+      themes[savedTheme] ? savedTheme : "midnight";
+
+    document.getElementById("backgroundSelect").value =
+      backgrounds[savedBackground] !== undefined
+        ? savedBackground : "default";
+
+    applyTheme(savedTheme,savedBackground);
+
+    // Find conversation
+    const column = profile.role === "king" ? "king_id" : "queen_id";
+
+    const {data:conversation,error:conversationError} = await client
+      .from("conversations")
+      .select("id,king_id,queen_id")
+      .eq(column,currentUser.id)
+      .single();
+
+    if(conversationError || !conversation){
       throw new Error("Private conversation not found.");
     }
 
     conversationId = conversation.id;
 
     await loadMessages();
-
     startRealtime();
 
-  } catch (error) {
+  }catch(error){
     setStatus(error.message || "Unable to open chat.");
   }
 }
 
-// =====================================
 // LOGOUT
-// =====================================
-
 document.getElementById("logout")
-.addEventListener("click", async () => {
-  if (realtimeChannel) {
-    await client.removeChannel(realtimeChannel);
+.addEventListener("click",async()=>{
+  if(chatChannel){
+    await chatChannel.untrack();
+    await client.removeChannel(chatChannel);
   }
-
   await client.auth.signOut();
   location.replace("index.html");
 });
 
-// =====================================
-// START
-// =====================================
-
 initializeChat();
-
 </script>
-
 </body>
 </html>
