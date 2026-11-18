@@ -9,100 +9,265 @@
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
+
 :root{
-  --page:#07172B;--panel:#091c32;--header:#10253d;
-  --sent:#735c35;--received:#18334f;--accent:#B89450;
-  --text:#f5f0e6;--muted:#aab5c4;--border:#34475c;
+  --page:#07172B;
+  --panel:#091c32;
+  --header:#10253d;
+  --sent:#735c35;
+  --received:#18334f;
+  --accent:#B89450;
+  --text:#f5f0e6;
+  --border:#34475c;
 }
+
 body{
-  background:var(--page);color:var(--text);
-  font-family:Georgia,serif;min-height:100vh;
-  min-height:100dvh;display:flex;justify-content:center;
+  background:var(--page);
+  color:var(--text);
+  font-family:Georgia,serif;
+  min-height:100vh;
+  min-height:100dvh;
+  display:flex;
+  justify-content:center;
 }
+
 .app{
-  width:100%;max-width:850px;height:100vh;height:100dvh;
-  display:flex;flex-direction:column;background:var(--panel);
+  width:100%;
+  max-width:850px;
+  height:100vh;
+  height:100dvh;
+  display:flex;
+  flex-direction:column;
+  background:var(--panel);
   border-left:1px solid var(--border);
   border-right:1px solid var(--border);
 }
+
 header{
-  padding:15px;background:var(--header);
+  padding:15px;
+  background:var(--header);
   border-bottom:1px solid var(--accent);
-  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
 }
-header h1{color:var(--accent);font-size:19px;font-weight:normal}
-header p{color:var(--muted);font-size:12px;margin-top:5px}
-.header-actions{display:flex;gap:8px}
+
+header h1{
+  color:var(--accent);
+  font-size:19px;
+  font-weight:normal;
+}
+
+header p{
+  color:#aab5c4;
+  font-size:12px;
+  margin-top:5px;
+}
+
+.header-actions{
+  display:flex;
+  gap:8px;
+}
+
 .header-actions button{
-  background:transparent;border:1px solid var(--accent);
-  color:var(--accent);padding:9px 11px;border-radius:7px;cursor:pointer;
+  background:transparent;
+  border:1px solid var(--accent);
+  color:var(--accent);
+  padding:9px 11px;
+  border-radius:7px;
+  cursor:pointer;
 }
+
 #status{
-  padding:9px 15px;color:var(--accent);font-size:12px;
-  text-align:center;background:var(--header);
+  padding:9px 15px;
+  color:var(--accent);
+  font-size:12px;
+  text-align:center;
+  background:var(--header);
 }
-#messages{
-  flex:1;overflow-y:auto;padding:20px 15px;
-  display:flex;flex-direction:column;gap:13px;
-}
-.empty{color:#8290a3;text-align:center;margin:auto;font-size:14px}
-.message{
-  max-width:78%;padding:12px 14px;border-radius:13px;
-  overflow-wrap:anywhere;line-height:1.5;
-}
-.sent{align-self:flex-end;background:var(--sent);color:#fff8e9;border-bottom-right-radius:3px}
-.received{align-self:flex-start;background:var(--received);color:var(--text);border-bottom-left-radius:3px}
-.message small{display:block;text-align:right;font-size:10px;opacity:.7;margin-top:6px}
-#typing{
-  min-height:20px;padding:0 17px 5px;color:var(--accent);
-  font-size:12px;font-style:italic;
-}
-form{
-  padding:13px;display:flex;gap:9px;
-  background:var(--header);border-top:1px solid var(--border);
-}
-textarea{
-  flex:1;min-width:0;resize:none;height:48px;max-height:120px;
-  padding:13px;border-radius:9px;border:1px solid #40546b;
-  background:var(--page);color:white;outline:none;
-  font-family:Arial,sans-serif;font-size:14px;
-}
-textarea:focus{border-color:var(--accent)}
-#send{
-  width:75px;border:0;border-radius:9px;background:var(--accent);
-  color:#07172B;font-weight:bold;cursor:pointer;
-}
-#send:disabled{opacity:.5;cursor:not-allowed}
+
 #settingsPanel{
-  display:none;padding:15px;background:var(--header);
+  display:none;
+  padding:15px;
+  background:var(--header);
   border-bottom:1px solid var(--accent);
 }
+
 #settingsPanel.open{display:block}
+
 .setting-row{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:12px;margin:10px 0;font-size:13px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin:12px 0;
+  font-size:13px;
 }
+
 .setting-row select{
-  width:55%;padding:9px;border-radius:7px;
-  border:1px solid var(--accent);background:var(--page);
-  color:var(--text);font-size:13px;
+  width:55%;
+  padding:9px;
+  border-radius:7px;
+  border:1px solid var(--accent);
+  background:var(--page);
+  color:var(--text);
+  font-size:13px;
 }
-#saveStatus{font-size:11px;color:var(--accent);margin-top:8px}
+
+#backgroundUpload{
+  width:55%;
+  min-width:0;
+  color:var(--text);
+  font-size:11px;
+}
+
+#backgroundUpload::file-selector-button{
+  padding:8px;
+  margin-right:5px;
+  border:1px solid var(--accent);
+  border-radius:6px;
+  background:var(--page);
+  color:var(--accent);
+  cursor:pointer;
+}
+
+#removeBackground{
+  border:1px solid var(--accent);
+  background:transparent;
+  color:var(--accent);
+  border-radius:7px;
+  padding:9px 12px;
+  cursor:pointer;
+}
+
+#saveStatus{
+  font-size:11px;
+  color:var(--accent);
+  margin-top:8px;
+}
+
+#messages{
+  flex:1;
+  overflow-y:auto;
+  padding:20px 15px;
+  display:flex;
+  flex-direction:column;
+  gap:13px;
+  background-color:var(--page);
+  background-position:center;
+  background-size:cover;
+  background-repeat:no-repeat;
+  background-attachment:scroll;
+}
+
+.empty{
+  color:#8290a3;
+  text-align:center;
+  margin:auto;
+  font-size:14px;
+  background:#07172b99;
+  padding:12px;
+  border-radius:10px;
+}
+
+.message{
+  max-width:78%;
+  padding:12px 14px;
+  border-radius:13px;
+  overflow-wrap:anywhere;
+  line-height:1.5;
+  backdrop-filter:blur(5px);
+}
+
+.sent{
+  align-self:flex-end;
+  background:var(--sent);
+  color:#fff8e9;
+  border-bottom-right-radius:3px;
+}
+
+.received{
+  align-self:flex-start;
+  background:var(--received);
+  color:var(--text);
+  border-bottom-left-radius:3px;
+}
+
+.message small{
+  display:block;
+  text-align:right;
+  font-size:10px;
+  opacity:.7;
+  margin-top:6px;
+}
+
+#typing{
+  min-height:20px;
+  padding:0 17px 5px;
+  color:var(--accent);
+  font-size:12px;
+  font-style:italic;
+}
+
+form{
+  padding:13px;
+  display:flex;
+  gap:9px;
+  background:var(--header);
+  border-top:1px solid var(--border);
+}
+
+textarea{
+  flex:1;
+  min-width:0;
+  resize:none;
+  height:48px;
+  max-height:120px;
+  padding:13px;
+  border-radius:9px;
+  border:1px solid #40546b;
+  background:var(--page);
+  color:white;
+  outline:none;
+  font-family:Arial,sans-serif;
+  font-size:14px;
+}
+
+textarea:focus{border-color:var(--accent)}
+
+#send{
+  width:75px;
+  border:0;
+  border-radius:9px;
+  background:var(--accent);
+  color:#07172B;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+#send:disabled{opacity:.5;cursor:not-allowed}
+
 @media(max-width:500px){
   header h1{font-size:15px}
   .message{max-width:88%}
   .header-actions button{padding:8px;font-size:12px}
+  .setting-row{align-items:flex-start;flex-direction:column}
+  .setting-row select,#backgroundUpload{width:100%}
 }
 </style>
 </head>
 
 <body>
+
 <div class="app">
+
   <header>
     <div>
       <h1>✦ The Hidden Conversations</h1>
       <p id="userLabel">Private Conversation</p>
     </div>
+
     <div class="header-actions">
       <button id="settingsBtn" type="button">⚙ Settings</button>
       <button id="logout" type="button">Logout</button>
@@ -110,6 +275,7 @@ textarea:focus{border-color:var(--accent)}
   </header>
 
   <section id="settingsPanel">
+
     <div class="setting-row">
       <label for="themeSelect">Chat Theme</label>
       <select id="themeSelect">
@@ -119,6 +285,7 @@ textarea:focus{border-color:var(--accent)}
         <option value="rose">Rose Night</option>
       </select>
     </div>
+
     <div class="setting-row">
       <label for="backgroundSelect">Chat Background</label>
       <select id="backgroundSelect">
@@ -126,9 +293,29 @@ textarea:focus{border-color:var(--accent)}
         <option value="stars">Starry Night</option>
         <option value="gradient">Soft Gradient</option>
         <option value="dark">Deep Dark</option>
+        <option value="custom">Custom Image</option>
       </select>
     </div>
-    <div id="saveStatus">Your preferences are saved automatically.</div>
+
+    <div class="setting-row">
+      <label for="backgroundUpload">Upload Your Image</label>
+      <input
+        type="file"
+        id="backgroundUpload"
+        accept="image/jpeg,image/png,image/webp"
+      >
+    </div>
+
+    <div class="setting-row">
+      <button type="button" id="removeBackground">
+        Remove Custom Background
+      </button>
+    </div>
+
+    <div id="saveStatus">
+      Your preferences are saved automatically.
+    </div>
+
   </section>
 
   <div id="status">Connecting...</div>
@@ -140,25 +327,45 @@ textarea:focus{border-color:var(--accent)}
   <div id="typing"></div>
 
   <form id="messageForm">
-    <textarea id="messageInput" placeholder="Write a message..."
-      maxlength="5000" required></textarea>
+    <textarea
+      id="messageInput"
+      placeholder="Write a message..."
+      maxlength="5000"
+      required
+    ></textarea>
     <button id="send" type="submit">Send</button>
   </form>
+
 </div>
 
 <script>
+
+// =====================================
+// SUPABASE CONFIGURATION
+// =====================================
+
 const SUPABASE_URL = "https://jjkrytylkxdxhvsybpdc.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_OJrh-S3KYeekZ28K-BE1xw_e1MXcbwq";
+
+const SUPABASE_PUBLISHABLE_KEY =
+"sb_publishable_OJrh-S3KYeekZ28K-BE1xw_e1MXcbwq";
 
 const client = window.supabase.createClient(
-  SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
 );
+
+const BUCKET = "chat-backgrounds";
+
+// =====================================
+// ELEMENTS AND STATE
+// =====================================
 
 const messagesBox = document.getElementById("messages");
 const statusBox = document.getElementById("status");
 const typingBox = document.getElementById("typing");
 const messageInput = document.getElementById("messageInput");
 const sendButton = document.getElementById("send");
+const saveStatus = document.getElementById("saveStatus");
 
 let currentUser = null;
 let currentProfile = null;
@@ -168,53 +375,86 @@ let loadedMessageIds = new Set();
 let typingTimer = null;
 let typingHideTimer = null;
 let isTyping = false;
-let partnerRole = null;
 let partnerName = "Partner";
+let customBackgroundPath = null;
+let backgroundRequestNumber = 0;
 
-function setStatus(value){
-  statusBox.textContent = value;
-}
-
-function formatTime(value){
-  return new Date(value).toLocaleString([],{
-    dateStyle:"short",timeStyle:"short"
-  });
-}
-
+// =====================================
 // THEMES
+// =====================================
+
 const themes = {
   midnight:{
-    page:"#07172B",panel:"#091c32",header:"#10253d",
-    sent:"#735c35",received:"#18334f",accent:"#B89450",
-    text:"#f5f0e6",border:"#34475c"
+    page:"#07172B",
+    panel:"#091c32",
+    header:"#10253d",
+    sent:"#735c35",
+    received:"#18334f",
+    accent:"#B89450",
+    text:"#f5f0e6",
+    border:"#34475c"
   },
+
   royal:{
-    page:"#07152e",panel:"#0b1e3d",header:"#142d54",
-    sent:"#315b9b",received:"#1b365e",accent:"#8eb9ff",
-    text:"#f0f5ff",border:"#34517a"
+    page:"#07152e",
+    panel:"#0b1e3d",
+    header:"#142d54",
+    sent:"#315b9b",
+    received:"#1b365e",
+    accent:"#8eb9ff",
+    text:"#f0f5ff",
+    border:"#34517a"
   },
+
   emerald:{
-    page:"#071e1a",panel:"#0c2923",header:"#123a30",
-    sent:"#356b50",received:"#194536",accent:"#8bc9a4",
-    text:"#edfff3",border:"#315b4b"
+    page:"#071e1a",
+    panel:"#0c2923",
+    header:"#123a30",
+    sent:"#356b50",
+    received:"#194536",
+    accent:"#8bc9a4",
+    text:"#edfff3",
+    border:"#315b4b"
   },
+
   rose:{
-    page:"#251321",panel:"#301a2b",header:"#43243b",
-    sent:"#85506d",received:"#4a2d45",accent:"#e6a9c6",
-    text:"#fff0f7",border:"#68445d"
+    page:"#251321",
+    panel:"#301a2b",
+    header:"#43243b",
+    sent:"#85506d",
+    received:"#4a2d45",
+    accent:"#e6a9c6",
+    text:"#fff0f7",
+    border:"#68445d"
   }
 };
 
+// =====================================
+// DEFAULT BACKGROUNDS
+// =====================================
+
 const backgrounds = {
   default:"none",
-  stars:"radial-gradient(circle at 15% 20%,#ffffff16 1px,transparent 2px),radial-gradient(circle at 75% 65%,#ffffff12 1px,transparent 2px)",
-  gradient:"linear-gradient(135deg,#14243b,#101c30,#1b2940)",
-  dark:"linear-gradient(135deg,#05090f,#10151e)"
+
+  stars:
+  "radial-gradient(circle at 15% 20%,#ffffff16 1px,transparent 2px),radial-gradient(circle at 75% 65%,#ffffff12 1px,transparent 2px)",
+
+  gradient:
+  "linear-gradient(135deg,#14243b,#101c30,#1b2940)",
+
+  dark:
+  "linear-gradient(135deg,#05090f,#10151e)"
 };
 
-function applyTheme(themeName,backgroundName){
+// =====================================
+// APPLY THEME
+// =====================================
+
+function applyTheme(themeName){
+
   const theme = themes[themeName] || themes.midnight;
   const root = document.documentElement;
+
   root.style.setProperty("--page",theme.page);
   root.style.setProperty("--panel",theme.panel);
   root.style.setProperty("--header",theme.header);
@@ -223,19 +463,72 @@ function applyTheme(themeName,backgroundName){
   root.style.setProperty("--accent",theme.accent);
   root.style.setProperty("--text",theme.text);
   root.style.setProperty("--border",theme.border);
-
-  messagesBox.style.background =
-    backgrounds[backgroundName] || "none";
 }
 
-// SAVE CHAT PREFERENCES
+// =====================================
+// APPLY DEFAULT BACKGROUND
+// =====================================
+
+function applyDefaultBackground(name){
+
+  const background = backgrounds[name] ?? backgrounds.default;
+
+  messagesBox.style.backgroundImage = background;
+  messagesBox.style.backgroundColor = "var(--page)";
+  messagesBox.style.backgroundSize =
+    name === "stars" ? "auto,auto" : "cover";
+  messagesBox.style.backgroundPosition = "center";
+  messagesBox.style.backgroundRepeat =
+    name === "stars" ? "repeat" : "no-repeat";
+
+  customBackgroundPath = null;
+}
+
+// =====================================
+// APPLY CUSTOM BACKGROUND
+// =====================================
+
+async function applyCustomBackground(path){
+
+  if(!path) return;
+
+  const requestNumber = ++backgroundRequestNumber;
+
+  const {data,error} = await client.storage
+    .from(BUCKET)
+    .createSignedUrl(path,3600);
+
+  if(error) throw error;
+
+  if(requestNumber !== backgroundRequestNumber) return;
+
+  messagesBox.style.backgroundImage =
+    `linear-gradient(#07172b44,#07172b44),url("${data.signedUrl}")`;
+
+  messagesBox.style.backgroundSize = "cover";
+  messagesBox.style.backgroundPosition = "center";
+  messagesBox.style.backgroundRepeat = "no-repeat";
+
+  customBackgroundPath = path;
+}
+
+// =====================================
+// SAVE PREFERENCES
+// =====================================
+
 async function savePreferences(){
+
+  if(!currentUser) return;
+
   const theme = document.getElementById("themeSelect").value;
   const background = document.getElementById("backgroundSelect").value;
-  const saveStatus = document.getElementById("saveStatus");
 
-  applyTheme(theme,background);
+  if(background === "custom") return;
+
   saveStatus.textContent = "Saving...";
+
+  applyTheme(theme);
+  applyDefaultBackground(background);
 
   const {error} = await client
     .from("profiles")
@@ -252,17 +545,151 @@ async function savePreferences(){
   }
 }
 
-// DISPLAY MESSAGES
+// =====================================
+// UPLOAD CUSTOM BACKGROUND
+// =====================================
+
+document.getElementById("backgroundUpload")
+.addEventListener("change",async event=>{
+
+  const file = event.target.files[0];
+
+  if(!file || !currentUser) return;
+
+  const allowedTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/webp"
+  ];
+
+  if(!allowedTypes.includes(file.type)){
+    saveStatus.textContent = "Please select JPG, PNG or WEBP.";
+    event.target.value = "";
+    return;
+  }
+
+  if(file.size > 5 * 1024 * 1024){
+    saveStatus.textContent = "Image must be smaller than 5 MB.";
+    event.target.value = "";
+    return;
+  }
+
+  saveStatus.textContent = "Uploading image...";
+
+  try{
+
+    const extension = file.type === "image/png"
+      ? "png"
+      : file.type === "image/webp"
+      ? "webp"
+      : "jpg";
+
+    const path = currentUser.id + "/background." + extension;
+
+    const {error:uploadError} = await client.storage
+      .from(BUCKET)
+      .upload(path,file,{
+        upsert:true,
+        contentType:file.type,
+        cacheControl:"3600"
+      });
+
+    if(uploadError) throw uploadError;
+
+    const {error:updateError} = await client
+      .from("profiles")
+      .update({
+        chat_background:"custom:" + path
+      })
+      .eq("id",currentUser.id);
+
+    if(updateError) throw updateError;
+
+    customBackgroundPath = path;
+
+    await applyCustomBackground(path);
+
+    document.getElementById("backgroundSelect").value = "custom";
+
+    saveStatus.textContent = "✓ Custom background saved!";
+
+  }catch(error){
+
+    saveStatus.textContent =
+      "Upload error: " + error.message;
+
+  }finally{
+
+    event.target.value = "";
+  }
+});
+
+// =====================================
+// REMOVE CUSTOM BACKGROUND
+// =====================================
+
+document.getElementById("removeBackground")
+.addEventListener("click",async()=>{
+
+  if(!currentUser) return;
+
+  saveStatus.textContent = "Removing background...";
+
+  try{
+
+    if(customBackgroundPath){
+
+      const {error:removeError} = await client.storage
+        .from(BUCKET)
+        .remove([customBackgroundPath]);
+
+      if(removeError) throw removeError;
+    }
+
+    const {error:updateError} = await client
+      .from("profiles")
+      .update({
+        chat_background:"default"
+      })
+      .eq("id",currentUser.id);
+
+    if(updateError) throw updateError;
+
+    customBackgroundPath = null;
+
+    document.getElementById("backgroundSelect").value = "default";
+
+    applyDefaultBackground("default");
+
+    saveStatus.textContent = "✓ Custom background removed.";
+
+  }catch(error){
+
+    saveStatus.textContent =
+      "Remove error: " + error.message;
+  }
+});
+
+// =====================================
+// DISPLAY MESSAGE
+// =====================================
+
 function renderMessage(message){
+
   if(loadedMessageIds.has(message.id)) return;
+
   loadedMessageIds.add(message.id);
 
   const empty = messagesBox.querySelector(".empty");
   if(empty) empty.remove();
 
   const item = document.createElement("div");
-  item.className = "message " +
-    (message.sender_id === currentUser.id ? "sent" : "received");
+
+  item.className =
+    "message " +
+    (message.sender_id === currentUser.id
+      ? "sent"
+      : "received");
 
   const content = document.createElement("div");
   content.textContent = message.content || "";
@@ -272,11 +699,24 @@ function renderMessage(message){
 
   item.append(content,time);
   messagesBox.appendChild(item);
+
   messagesBox.scrollTop = messagesBox.scrollHeight;
 }
 
-// LOAD ALL MESSAGES - NO LIMIT
+function formatTime(value){
+
+  return new Date(value).toLocaleString([],{
+    dateStyle:"short",
+    timeStyle:"short"
+  });
+}
+
+// =====================================
+// LOAD MESSAGES - NO MANUAL LIMIT
+// =====================================
+
 async function loadMessages(){
+
   const {data,error} = await client
     .from("messages")
     .select("id,conversation_id,sender_id,content,created_at")
@@ -289,29 +729,48 @@ async function loadMessages(){
   loadedMessageIds.clear();
 
   if(!data || data.length === 0){
+
     messagesBox.innerHTML =
       '<div class="empty">No messages yet. Say hello!</div>';
+
     return;
   }
 
   data.forEach(renderMessage);
 }
 
+// =====================================
 // ONLINE STATUS
+// =====================================
+
 function updateOnlineStatus(){
+
   if(!chatChannel) return;
 
   const state = chatChannel.presenceState();
-  const onlineIds = Object.keys(state);
-  const partnerOnline = onlineIds.some(id => id !== currentUser.id);
 
-  setStatus(partnerName + (partnerOnline
-    ? " • Online"
-    : " • Offline"));
+  const onlineIds = Object.keys(state);
+
+  const partnerOnline = onlineIds.some(
+    id => id !== currentUser.id
+  );
+
+  setStatus(
+    partnerName +
+    (partnerOnline ? " • Online" : " • Offline")
+  );
 }
 
+function setStatus(value){
+  statusBox.textContent = value;
+}
+
+// =====================================
 // TYPING INDICATOR
+// =====================================
+
 function showTyping(payload){
+
   if(!payload || payload.user_id === currentUser.id) return;
 
   typingBox.textContent = payload.typing
@@ -321,6 +780,7 @@ function showTyping(payload){
   clearTimeout(typingHideTimer);
 
   if(payload.typing){
+
     typingHideTimer = setTimeout(()=>{
       typingBox.textContent = "";
     },3000);
@@ -328,6 +788,7 @@ function showTyping(payload){
 }
 
 async function sendTyping(value){
+
   if(!chatChannel) return;
 
   await chatChannel.send({
@@ -340,8 +801,12 @@ async function sendTyping(value){
   });
 }
 
-// REALTIME PRESENCE + MESSAGES + TYPING
+// =====================================
+// REALTIME
+// =====================================
+
 function startRealtime(){
+
   chatChannel = client
     .channel("private-chat-" + conversationId,{
       config:{
@@ -349,12 +814,15 @@ function startRealtime(){
         broadcast:{self:false}
       }
     })
+
     .on("presence",{event:"sync"},()=>{
       updateOnlineStatus();
     })
+
     .on("broadcast",{event:"typing"},({payload})=>{
       showTyping(payload);
     })
+
     .on("postgres_changes",{
       event:"INSERT",
       schema:"public",
@@ -363,32 +831,46 @@ function startRealtime(){
     },payload=>{
       renderMessage(payload.new);
     })
+
     .subscribe(async status=>{
+
       if(status === "SUBSCRIBED"){
+
         await chatChannel.track({
           user_id:currentUser.id,
           role:currentProfile.role
         });
+
         updateOnlineStatus();
+
       }else if(status === "CHANNEL_ERROR"){
+
         setStatus("Realtime connection error");
+
       }else if(status === "CLOSED"){
+
         setStatus("Realtime disconnected");
       }
     });
 }
 
-// SEND TEXT MESSAGE
+// =====================================
+// SEND MESSAGE
+// =====================================
+
 document.getElementById("messageForm")
 .addEventListener("submit",async event=>{
+
   event.preventDefault();
 
   const content = messageInput.value.trim();
+
   if(!content || !conversationId || !currentUser) return;
 
   sendButton.disabled = true;
 
   try{
+
     const {data,error} = await client
       .from("messages")
       .insert({
@@ -403,38 +885,57 @@ document.getElementById("messageForm")
     if(error) throw error;
 
     renderMessage(data);
+
     messageInput.value = "";
+
     if(isTyping){
+
       isTyping = false;
       await sendTyping(false);
     }
+
   }catch(error){
+
     setStatus("Message error: " + error.message);
+
   }finally{
+
     sendButton.disabled = false;
     messageInput.focus();
   }
 });
 
+// =====================================
 // TYPING EVENTS
+// =====================================
+
 messageInput.addEventListener("input",()=>{
+
   if(!chatChannel) return;
 
   if(!isTyping){
+
     isTyping = true;
     sendTyping(true);
   }
 
   clearTimeout(typingTimer);
+
   typingTimer = setTimeout(()=>{
+
     isTyping = false;
     sendTyping(false);
+
   },1200);
 });
 
-// SETTINGS
+// =====================================
+// SETTINGS PANEL
+// =====================================
+
 document.getElementById("settingsBtn")
 .addEventListener("click",()=>{
+
   document.getElementById("settingsPanel")
     .classList.toggle("open");
 });
@@ -445,15 +946,21 @@ document.getElementById("themeSelect")
 document.getElementById("backgroundSelect")
 .addEventListener("change",savePreferences);
 
-// INITIALIZE
+// =====================================
+// INITIALIZE CHAT
+// =====================================
+
 async function initializeChat(){
+
   try{
+
     const {data:sessionData,error:sessionError} =
       await client.auth.getSession();
 
     if(sessionError) throw sessionError;
 
     if(!sessionData.session){
+
       location.replace("index.html");
       return;
     }
@@ -462,22 +969,27 @@ async function initializeChat(){
 
     const {data:profile,error:profileError} = await client
       .from("profiles")
-      .select("id,username,display_name,role,chat_theme,chat_background")
+      .select(
+        "id,username,display_name,role,chat_theme,chat_background"
+      )
       .eq("id",currentUser.id)
       .single();
 
     if(profileError || !profile){
+
       throw new Error("User profile not found.");
     }
 
     currentProfile = profile;
 
     if(profile.role === "admin"){
+
       location.replace("admin.html");
       return;
     }
 
     if(profile.role !== "king" && profile.role !== "queen"){
+
       throw new Error("Chat access denied.");
     }
 
@@ -485,8 +997,9 @@ async function initializeChat(){
       (profile.display_name || profile.username) +
       " • " + profile.role.toUpperCase();
 
-    // Find partner profile
-    partnerRole = profile.role === "king" ? "queen" : "king";
+    // FIND PARTNER
+    const partnerRole =
+      profile.role === "king" ? "queen" : "king";
 
     const {data:partner} = await client
       .from("profiles")
@@ -495,24 +1008,49 @@ async function initializeChat(){
       .maybeSingle();
 
     if(partner){
-      partnerName = partner.display_name || partner.username || "Partner";
+
+      partnerName =
+        partner.display_name ||
+        partner.username ||
+        "Partner";
     }
 
-    // Restore saved preferences
-    const savedTheme = profile.chat_theme || "midnight";
+    // RESTORE THEME
+    const savedTheme = themes[profile.chat_theme]
+      ? profile.chat_theme
+      : "midnight";
+
+    document.getElementById("themeSelect").value = savedTheme;
+
+    applyTheme(savedTheme);
+
+    // RESTORE BACKGROUND
     const savedBackground = profile.chat_background || "default";
 
-    document.getElementById("themeSelect").value =
-      themes[savedTheme] ? savedTheme : "midnight";
+    if(savedBackground.startsWith("custom:")){
 
-    document.getElementById("backgroundSelect").value =
-      backgrounds[savedBackground] !== undefined
-        ? savedBackground : "default";
+      const path = savedBackground.substring(7);
 
-    applyTheme(savedTheme,savedBackground);
+      document.getElementById("backgroundSelect").value = "custom";
 
-    // Find conversation
-    const column = profile.role === "king" ? "king_id" : "queen_id";
+      await applyCustomBackground(path);
+
+    }else{
+
+      const validBackground =
+        backgrounds[savedBackground] !== undefined
+          ? savedBackground
+          : "default";
+
+      document.getElementById("backgroundSelect").value =
+        validBackground;
+
+      applyDefaultBackground(validBackground);
+    }
+
+    // FIND CONVERSATION
+    const column =
+      profile.role === "king" ? "king_id" : "queen_id";
 
     const {data:conversation,error:conversationError} = await client
       .from("conversations")
@@ -521,31 +1059,46 @@ async function initializeChat(){
       .single();
 
     if(conversationError || !conversation){
+
       throw new Error("Private conversation not found.");
     }
 
     conversationId = conversation.id;
 
     await loadMessages();
+
     startRealtime();
 
   }catch(error){
+
     setStatus(error.message || "Unable to open chat.");
   }
 }
 
+// =====================================
 // LOGOUT
+// =====================================
+
 document.getElementById("logout")
 .addEventListener("click",async()=>{
+
   if(chatChannel){
+
     await chatChannel.untrack();
     await client.removeChannel(chatChannel);
   }
+
   await client.auth.signOut();
+
   location.replace("index.html");
 });
 
+// =====================================
+// START
+// =====================================
+
 initializeChat();
+
 </script>
 </body>
 </html>
