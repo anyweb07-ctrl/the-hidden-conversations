@@ -3,7 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>The Hidden Conversations</title>
+
+  <meta name="theme-color" content="#07172B">
+  <meta name="description" content="A private world for two.">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -17,6 +21,7 @@
 
     body {
       min-height: 100vh;
+      min-height: 100dvh;
       background:
         radial-gradient(circle at top, #183453 0%, #07172B 55%, #030b16 100%);
       display: flex;
@@ -30,15 +35,16 @@
       width: 100%;
       max-width: 410px;
       padding: 42px 30px;
-      background: rgba(7, 23, 43, 0.88);
+      background: rgba(7, 23, 43, 0.92);
       border: 1px solid #B89450;
       border-radius: 18px;
       text-align: center;
       box-shadow: 0 15px 55px rgba(0,0,0,0.5);
+      backdrop-filter: blur(12px);
     }
 
     .symbol {
-      font-size: 42px;
+      font-size: 46px;
       color: #B89450;
       margin-bottom: 18px;
     }
@@ -47,20 +53,32 @@
       font-size: 27px;
       font-weight: normal;
       color: #d5b675;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      line-height: 1.3;
     }
 
     .subtitle {
       color: #aab5c4;
-      font-size: 13px;
+      font-size: 12px;
       letter-spacing: 2px;
       margin-bottom: 35px;
+    }
+
+    .input-group {
+      text-align: left;
+      margin-bottom: 17px;
+    }
+
+    label {
+      display: block;
+      color: #c4b58f;
+      font-size: 13px;
+      margin-bottom: 8px;
     }
 
     input {
       width: 100%;
       padding: 15px;
-      margin-bottom: 17px;
       background: #10253d;
       border: 1px solid #34475c;
       border-radius: 8px;
@@ -71,6 +89,11 @@
 
     input:focus {
       border-color: #B89450;
+      box-shadow: 0 0 0 2px rgba(184,148,80,0.12);
+    }
+
+    input::placeholder {
+      color: #8290a3;
     }
 
     button {
@@ -83,12 +106,19 @@
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
-      margin-top: 8px;
+      margin-top: 12px;
+      transition: 0.2s ease;
+    }
+
+    button:hover {
+      background: #d5b675;
+      transform: translateY(-1px);
     }
 
     button:disabled {
       opacity: 0.6;
       cursor: wait;
+      transform: none;
     }
 
     #message {
@@ -96,6 +126,7 @@
       font-size: 14px;
       color: #d5b675;
       min-height: 20px;
+      line-height: 1.5;
       overflow-wrap: anywhere;
     }
 
@@ -103,14 +134,30 @@
       margin-top: 35px;
       color: #718096;
       font-size: 11px;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
+    }
+
+    .security-note {
+      color: #718096;
+      font-size: 11px;
+      margin-top: 14px;
+    }
+
+    @media (max-width: 480px) {
+      .login-card {
+        padding: 35px 23px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
     }
   </style>
 </head>
 
 <body>
 
-  <div class="login-card">
+  <main class="login-card">
 
     <div class="symbol">✦</div>
 
@@ -120,21 +167,28 @@
 
     <form id="loginForm">
 
-      <input
-        type="text"
-        id="username"
-        placeholder="Username"
-        autocomplete="username"
-        required
-      >
+      <div class="input-group">
+        <label for="username">Username</label>
+        <input
+          type="text"
+          id="username"
+          placeholder="Enter your username"
+          autocomplete="username"
+          maxlength="24"
+          required
+        >
+      </div>
 
-      <input
-        type="password"
-        id="password"
-        placeholder="Password"
-        autocomplete="current-password"
-        required
-      >
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          placeholder="Enter your password"
+          autocomplete="current-password"
+          required
+        >
+      </div>
 
       <button type="submit" id="loginButton">
         Enter Private Space
@@ -142,29 +196,47 @@
 
     </form>
 
-    <p id="message"></p>
+    <p id="message" role="status" aria-live="polite"></p>
+
+    <p class="security-note">
+      Your private space awaits.
+    </p>
 
     <div class="footer">
       PRIVATE • PERSONAL • SECURE
     </div>
 
-  </div>
+  </main>
 
   <script>
-    // Replace these with your own Supabase project details
-    const SUPABASE_URL = "https://jjkrytylkxdxhvsybpdc.supabase.co";
-    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_OJrh-S3KYeekZ28K-BE1xw_e1MXcbwq";
+    // =====================================
+    // SUPABASE CONFIGURATION
+    // =====================================
+
+    const SUPABASE_URL = "YOUR_PROJECT_URL";
+
+    const SUPABASE_PUBLISHABLE_KEY =
+      "YOUR_PUBLISHABLE_KEY";
 
     const supabaseClient = window.supabase.createClient(
       SUPABASE_URL,
       SUPABASE_PUBLISHABLE_KEY
     );
 
+    // =====================================
+    // ELEMENTS
+    // =====================================
+
     const form = document.getElementById("loginForm");
     const message = document.getElementById("message");
     const button = document.getElementById("loginButton");
 
+    // =====================================
+    // LOGIN SYSTEM
+    // =====================================
+
     form.addEventListener("submit", async (event) => {
+
       event.preventDefault();
 
       const username = document
@@ -181,46 +253,109 @@
         return;
       }
 
+      if (!password) {
+        message.textContent = "Please enter your password.";
+        return;
+      }
+
       button.disabled = true;
+      button.textContent = "Please wait...";
       message.textContent = "Checking your account...";
 
       try {
-        const email =
-          username + "@login.hidden-conversations.com";
+
+        // ADMIN USES REAL EMAIL
+        // KING AND QUEEN USE INTERNAL EMAIL
+
+        let loginEmail;
+
+        if (username === "admin") {
+          loginEmail = "khushdonga7@gmail.com";
+        } else {
+          loginEmail =
+            username + "@login.hidden-conversations.com";
+        }
+
+        // SUPABASE AUTHENTICATION
 
         const { data, error } =
           await supabaseClient.auth.signInWithPassword({
-            email,
-            password
+            email: loginEmail,
+            password: password
           });
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
+
+        // FETCH USER PROFILE
 
         const { data: profile, error: profileError } =
           await supabaseClient
             .from("profiles")
-            .select("username, display_name, role")
+            .select("id, username, display_name, role, avatar_url")
             .eq("id", data.user.id)
             .single();
 
         if (profileError || !profile) {
+
           await supabaseClient.auth.signOut();
-          throw new Error("Account profile not found.");
+
+          throw new Error(
+            "Account profile not found. Please contact Admin."
+          );
         }
 
-        message.textContent =
-          "Welcome, " + profile.display_name + "! Role: " + profile.role;
+        // VERIFY USERNAME MATCH
 
-        // Temporary login test.
-        // We will build the Admin, King and Queen dashboards next.
+        if (profile.username !== username) {
+
+          await supabaseClient.auth.signOut();
+
+          throw new Error("Username does not match this account.");
+        }
+
+        // VERIFY ROLE
+
+        if (!["admin", "king", "queen"].includes(profile.role)) {
+
+          await supabaseClient.auth.signOut();
+
+          throw new Error("Invalid account role.");
+        }
+
+        // SUCCESSFUL LOGIN
+
+        message.textContent =
+          "Welcome, " + profile.display_name +
+          "! Login successful.";
+
+        button.textContent = "Login Successful";
+
+        // TEMPORARY LOGIN TEST
+        // Dashboards will be added in the next development step.
+
+        console.log("Logged in user:", {
+          username: profile.username,
+          displayName: profile.display_name,
+          role: profile.role
+        });
 
       } catch (error) {
+
         message.textContent =
           error.message || "Login failed. Please try again.";
+
+        button.textContent = "Enter Private Space";
+
       } finally {
+
         button.disabled = false;
+
       }
+
     });
+
   </script>
 
 </body>
